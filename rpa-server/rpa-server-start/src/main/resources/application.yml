@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: web3-rpa-server
+  profiles:
+    active: '@profile.name@'

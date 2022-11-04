@@ -4,7 +4,7 @@
   <artifactId>jeecg-boot-parent</artifactId>
   <version>3.4.3</version>
   <packaging>pom</packaging>
-  <name>JEECG BOOT ${project.version}</name>
+  <name>web3 RPA(based on JEECG BOOT)</name>
 
   	<parent>
 	    <groupId>org.springframework.boot</groupId>
@@ -14,6 +14,7 @@
 	</parent>
 
 	<properties>
+		<web3rpa.version>1.0.0</web3rpa.version>
 		<jeecgboot.version>3.4.3</jeecgboot.version>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,6 +66,7 @@
         <module>jeecg-boot-base-core</module>
         <module>jeecg-module-demo</module>
         <module>jeecg-module-system</module>
+		<module>rpa-server</module>
 	</modules>
 
 	<repositories>
@@ -393,7 +395,7 @@
 			<url>http://maven.jeecg.com:8090/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
     <!-- 环境 -->
     <profiles>
         <!-- 开发 -->

@@ -1,6 +1,6 @@
 version: '2'
 services:
-  web3rpa-mysql:
+  jeecg-boot-mysql:
     build:
       context: ./db
     environment:
@@ -8,8 +8,8 @@ services:
       MYSQL_ROOT_HOST: '%'
       TZ: Asia/Shanghai
     restart: always
-    container_name: web3rpa-mysql
-    image: web3rpa-mysql
+    container_name: jeecg-boot-mysql
+    image: jeecg-boot-mysql
     command:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
@@ -20,23 +20,23 @@ services:
     ports:
       - 3306:3306
 
-  web3rpa-redis:
+  jeecg-boot-redis:
     image: redis:5.0
     ports:
       - 6379:6379
     restart: always
-    hostname: web3rpa-redis
-    container_name: web3rpa-redis
+    hostname: jeecg-boot-redis
+    container_name: jeecg-boot-redis
 
-  web3rpa-server:
+  jeecg-boot-system:
     build:
-      context: ./rpa-server/rpa-server-start
+      context: ./jeecg-module-system/jeecg-system-start
     restart: on-failure
     depends_on:
-      - web3rpa-mysql
-      - web3rpa-redis
-    container_name: web3rpa-server
-    image: web3rpa-server
-    hostname: web3rpa-server
+      - jeecg-boot-mysql
+      - jeecg-boot-redis
+    container_name: jeecg-boot-system
+    image: jeecg-boot-system
+    hostname: jeecg-boot-system
     ports:
       - 8080:8080
