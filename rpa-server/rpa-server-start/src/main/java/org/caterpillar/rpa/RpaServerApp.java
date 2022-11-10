@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
@@ -15,14 +14,14 @@ import java.net.UnknownHostException;
 
 @Slf4j
 @SpringBootApplication(scanBasePackages = {"org.caterpillar.rpa","org.jeecg"})
-public class rpaServerApp extends SpringBootServletInitializer {
+public class RpaServerApp extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(rpaServerApp.class);
+        return application.sources(RpaServerApp.class);
     }
 
     public static void main(String[] args) throws UnknownHostException {
-        ConfigurableApplicationContext application = SpringApplication.run(rpaServerApp.class, args);
+        ConfigurableApplicationContext application = SpringApplication.run(RpaServerApp.class, args);
         Environment env = application.getEnvironment();
         String ip = InetAddress.getLocalHost().getHostAddress();
         String port = env.getProperty("server.port");
