@@ -1,0 +1,75 @@
+version: '2'
+services:
+  web3rpa-mysql:
+    build:
+      context: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      TZ: Asia/Shanghai
+    restart: always
+    container_name: web3rpa-mysql
+    image: web3rpa-mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --max_allowed_packet=128M
+      --default-authentication-plugin=caching_sha2_password
+    ports:
+      - 3306:3306
+
+  web3rpa-redis:
+    image: redis:5.0
+    ports:
+      - 6379:6379
+    restart: always
+    hostname: web3rpa-redis
+    container_name: web3rpa-redis
+
+  web3rpa-server:
+    build:
+      context: ./rpa-server/rpa-server-start
+    restart: on-failure
+    depends_on:
+      - web3rpa-mysql
+      - web3rpa-redis
+    container_name: web3rpa-server
+    image: web3rpa-server
+    hostname: web3rpa-server
+    ports:
+      - 8080:8080
+
+  web3rpa-graphql:
+    image: hasura/graphql-engine:pull5655-633f084f
+    ports:
+      - "8082:8080"
+    depends_on:
+      - web3rpa-mysql
+      - web3rpa-redis
+    command:
+      - graphql-engine
+      - --mysql-host
+      - web3rpa-mysql
+      - --mysql-user
+      - root
+      - --mysql-port
+      - 3306
+      - --mysql-dbname
+      - web3rpa_db
+      - --mysql-password
+      - root
+      - serve
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: jdbc:mysql://web3rpa-mysql:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## enable debugging mode. It is recommended to disable this in production
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      ## uncomment next line to run console offline (i.e load console assets from server instead of CDN)
+      # HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
+      ## uncomment next line to set an admin secret
+      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey

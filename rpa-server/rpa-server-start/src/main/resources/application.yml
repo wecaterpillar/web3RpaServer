@@ -146,6 +146,7 @@ spring:
     host: ${redis_host:web3rpa-redis}
     port: ${redis_port:6379}
     password: ${redis_password:''}
+
 #mybatis plus 设置
 mybatis-plus:
   mapper-locations: classpath*:org/jeecg/modules/**/xml/*Mapper.xml,classpath*:org/caterpillar/rpa/**/xml/*Mapper.xml
@@ -162,6 +163,15 @@ mybatis-plus:
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 返回类型为Map,显示null对应的字段
     call-setters-on-nulls: true
+
+# graphql
+graphql:
+  tools:
+    schema-location-pattern: graphql/*.graphqls
+  graphiql:
+    # 开启可交互页面，用于调试
+    enabled: true
+
 #jeecg专用配置
 minidao:
   base-package: org.jeecg.modules.jmreport.*

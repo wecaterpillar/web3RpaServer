@@ -4,15 +4,13 @@
   <artifactId>jeecg-boot-parent</artifactId>
   <version>3.4.3</version>
   <packaging>pom</packaging>
-  <name>web3 RPA(based on JEECG BOOT)</name>
-
+  <name>web3 RPA(jeecg-boot)</name>
   	<parent>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-parent</artifactId>
 	    <version>2.6.6</version>
 	    <relativePath/>
 	</parent>
-
 	<properties>
 		<web3rpa.version>1.0.0</web3rpa.version>
 		<jeecgboot.version>3.4.3</jeecgboot.version>

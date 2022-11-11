@@ -9,20 +9,25 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rpa-server-start</artifactId>
+    <artifactId>rpa-server-biz</artifactId>
 
     <dependencies>
-        <!-- SYSTEM 系统管理模块 -->
         <dependency>
             <groupId>org.jeecgframework.boot</groupId>
-            <artifactId>jeecg-system-biz</artifactId>
-            <version>${jeecgboot.version}</version>
+            <artifactId>jeecg-boot-base-core</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.caterpillar.rpa</groupId>
-            <artifactId>rpa-server-biz</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.graphql-java-kickstart</groupId>
+            <artifactId>graphql-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <!-- querydsl-core -->
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-core</artifactId>
         </dependency>
     </dependencies>
 
