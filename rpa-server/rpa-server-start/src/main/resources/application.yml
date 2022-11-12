@@ -100,7 +100,7 @@ spring:
       stat-view-servlet:
         enabled: true
         loginUsername: admin
-        loginPassword: 123456
+        loginPassword: admin321
         allow:
       web-stat-filter:
         enabled: true
@@ -130,7 +130,7 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: ${jdbc_url:jdbc:mysql://web3rpa-mysql:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
+          url: ${jdbc_url:jdbc:mysql://w3rpa-mysql:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
           username: ${jdbc_username:root}
           password: ${jdbc_password:root}
           driver-class-name: ${jdbc_driver:com.mysql.cj.jdbc.Driver}
@@ -143,7 +143,7 @@ spring:
   #redis 配置
   redis:
     database: ${redis_db:0}
-    host: ${redis_host:web3rpa-redis}
+    host: ${redis_host:w3rpa-redis}
     port: ${redis_port:6379}
     password: ${redis_password:''}
 
@@ -186,8 +186,8 @@ jeecg:
   uploadType: local
   # 前端访问地址
   domainUrl:
-    pc: http://localhost:3100
-    app: http://localhost:8051
+    pc: ${domainUrl_pc:http://localhost:3100}
+    app: ${domainUrl_app:http://localhost:8051}
   path:
     #文件上传根目录 设置
     upload: /opt/upFiles
@@ -236,10 +236,10 @@ jeecg:
     logRetentionDays: 30
   #分布式锁配置
   redisson:
-    address: 127.0.0.1:6379
-    password:
+    address: ${redis_host:w3rpa-redis}:{redis_port:6379}
+    password: ${redis_password:''}
     type: STANDALONE
-    enabled: true
+    enabled: ${redisson:true}
 #cas单点登录
 cas:
   prefixUrl: http://cas.example.org:8443/cas
@@ -255,11 +255,11 @@ knife4j:
   production: false
   basic:
     enable: false
-    username: jeecg
-    password: jeecg1314
+    username: rpa
+    password: rpa1314
 #第三方登录
 justauth:
-  enabled: false
+  enabled: ${justauth:true}
   type:
     GITHUB:
       client-id: ??

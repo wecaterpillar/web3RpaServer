@@ -1,0 +1,64 @@
+version: '2'
+services:
+  w3rpa-mysql:
+    image: mysql:8.0.31
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      TZ: Asia/Shanghai
+    restart: always
+    container_name: w3rpa-mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=0
+      --max_allowed_packet=128M
+      --default-authentication-plugin=caching_sha2_password
+    ports:
+      - 3306:3306
+    volumes:
+      - /data/rpa-data/mysql/conf.d:/etc/mysql/conf.d
+      - /data/rpa-data/mysql/data:/var/lib/mysql
+
+  w3rpa-redis:
+    image: redis:5.0
+    command: redis-server --requirepass rparedis
+    ports:
+      - 6379:6379
+    restart: always
+    hostname: w3rpa-redis
+    container_name: w3rpa-redis
+    volumes:
+      - /data/rpa-data/redis/data:/data
+
+  w3rpa-server:
+    image: hkccr.ccs.tencentyun.com/web3b/w3rpa-server:1.0.0
+    restart: on-failure
+    environment:
+      jdbc_url: jdbc:mysql://w3rpa-mysql:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      jdbc_username: w3rpa
+      jdbc_password: w3rpa
+      redis_host: w3rpa-redis
+      redis_password: w3rpa
+      #domainUrl_pc: http://localhost:3100
+      #domainUrl_app: http://localhost:8051
+    depends_on:
+      - w3rpa-mysql
+      - w3rpa-redis
+    container_name: w3rpa-server
+    hostname: w3rpa-server
+    ports:
+      - 8080:8080
+
+  w3rpa-web:
+    image: nginx
+    depends_on:
+      - w3rpa-server
+    container_name: w3rpa-web
+    ports:
+      - 80:80
+    volumes:
+      - /data/rpa-data/nginx/conf.d:/etc/nginx/conf.d
+      - /data/rpa-data/nginx/html:/var/www/html
+      - /data/rpa-data/nginx/web:/var/www/web

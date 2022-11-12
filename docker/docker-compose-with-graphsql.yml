@@ -1,6 +1,6 @@
 version: '2'
 services:
-  web3rpa-mysql:
+  w3rpa-mysql:
     build:
       context: ./db
     environment:
@@ -8,8 +8,8 @@ services:
       MYSQL_ROOT_HOST: '%'
       TZ: Asia/Shanghai
     restart: always
-    container_name: web3rpa-mysql
-    image: web3rpa-mysql
+    container_name: w3rpa-mysql
+    image: w3rpa-mysql
     command:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
@@ -20,38 +20,38 @@ services:
     ports:
       - 3306:3306
 
-  web3rpa-redis:
+  w3rpa-redis:
     image: redis:5.0
     ports:
       - 6379:6379
     restart: always
-    hostname: web3rpa-redis
-    container_name: web3rpa-redis
+    hostname: w3rpa-redis
+    container_name: w3rpa-redis
 
-  web3rpa-server:
+  w3rpa-server:
     build:
       context: ./rpa-server/rpa-server-start
     restart: on-failure
     depends_on:
-      - web3rpa-mysql
-      - web3rpa-redis
-    container_name: web3rpa-server
-    image: web3rpa-server
-    hostname: web3rpa-server
+      - w3rpa-mysql
+      - w3rpa-redis
+    container_name: w3rpa-server
+    image: w3rpa-server
+    hostname: w3rpa-server
     ports:
       - 8080:8080
 
-  web3rpa-graphql:
+  w3rpa-graphql:
     image: hasura/graphql-engine:pull5655-633f084f
     ports:
       - "8082:8080"
     depends_on:
-      - web3rpa-mysql
-      - web3rpa-redis
+      - w3rpa-mysql
+      - w3rpa-redis
     command:
       - graphql-engine
       - --mysql-host
-      - web3rpa-mysql
+      - w3rpa-mysql
       - --mysql-user
       - root
       - --mysql-port
@@ -63,7 +63,7 @@ services:
       - serve
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: jdbc:mysql://web3rpa-mysql:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      HASURA_GRAPHQL_DATABASE_URL: jdbc:mysql://w3rpa-mysql:3306/w3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
