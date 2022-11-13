@@ -60,5 +60,6 @@ services:
       - 80:80
     volumes:
       - /data/rpa-data/nginx/conf.d:/etc/nginx/conf.d
+      - /data/rpa-data/nginx/cert:/usr/local/nginx/cert
       - /data/rpa-data/nginx/html:/var/www/html
       - /data/rpa-data/nginx/web:/var/www/web
