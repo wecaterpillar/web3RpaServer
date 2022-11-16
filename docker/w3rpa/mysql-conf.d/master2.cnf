@@ -2,8 +2,9 @@
 server_id = 2
 
 log_bin = mysql-bin
-binlog-ignore-db = mysql,information_schema,performance_schema
+binlog-ignore-db = mysql,sys,information_schema,performance_schema
 log_slave_updates = true
+slave-skip-errors = all
 sync_binlog = 1
 innodb_flush_log_at_trx_commit = 1
 auto_increment_increment = 2

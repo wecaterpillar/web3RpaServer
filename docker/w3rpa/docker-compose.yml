@@ -41,6 +41,9 @@ services:
       jdbc_password: w3rpa
       redis_host: w3rpa-redis
       redis_password: w3rpa
+      github_client_id: e946e6cf49901425e962
+      #github_client_secret: ''
+      #github_redirect_uri: 'http://sso.test.com:8080/jeecg-boot/sys/thirdLogin/github/callback'
       #domainUrl_pc: http://localhost:3100
       #domainUrl_app: http://localhost:8051
     depends_on:
@@ -58,6 +61,7 @@ services:
     container_name: w3rpa-web
     ports:
       - 80:80
+      - 443:443
     volumes:
       - /data/rpa-data/nginx/conf.d:/etc/nginx/conf.d
       - /data/rpa-data/nginx/cert:/usr/local/nginx/cert
