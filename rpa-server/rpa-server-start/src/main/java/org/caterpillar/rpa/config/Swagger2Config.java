@@ -1,4 +1,4 @@
-package org.jeecg.config;
+package org.caterpillar.rpa.config;
 
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
@@ -19,7 +19,6 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
@@ -35,12 +34,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @Author scott
- */
-//@Configuration
-//@EnableSwagger2    //开启 Swagger2
-//@EnableKnife4j     //开启 knife4j，可以不写
+
+@Configuration
+@EnableSwagger2    //开启 Swagger2
+@EnableKnife4j     //开启 knife4j，可以不写
 @Import(BeanValidatorPluginsConfiguration.class)
 public class Swagger2Config implements WebMvcConfigurer {
 
@@ -68,7 +65,9 @@ public class Swagger2Config implements WebMvcConfigurer {
                 .apiInfo(apiInfo())
                 .select()
                 //此包路径下的类，才生成接口文档
-                .apis(RequestHandlerSelectors.basePackage("org.jeecg"))
+                //.apis(RequestHandlerSelectors.basePackage("org.caterpillar.rpa"))
+                //.apis(RequestHandlerSelectors.basePackage("org.jeecg"))
+                .apis(RequestHandlerSelectors.basePackage("org"))
                 //加了ApiOperation注解的类，才生成接口文档
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
@@ -109,14 +108,12 @@ public class Swagger2Config implements WebMvcConfigurer {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 // //大标题
-                .title("JeecgBoot 后台服务API接口文档")
+                .title("Web3 RPA Server 后台服务API接口文档(based Jeecg)")
                 // 版本号
                 .version("1.0")
 //				.termsOfServiceUrl("NO terms of service")
                 // 描述
                 .description("后台API接口")
-                // 作者
-                .contact(new Contact("北京国炬信息技术有限公司","www.jeccg.com","jeecgos@163.com"))
                 .license("The Apache License, Version 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .build();

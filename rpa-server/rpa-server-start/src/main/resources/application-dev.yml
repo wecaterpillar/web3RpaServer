@@ -97,10 +97,10 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-          username: root
-          password: root2020
-          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${jdbc_url:jdbc:mysql://127.0.0.1:3306/web3rpa_db?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
+          username: ${jdbc_username:root}
+          password: ${jdbc_password:root2020}
+          driver-class-name: ${jdbc_driver:com.mysql.cj.jdbc.Driver}
           # 多数据源配置
           #multi-datasource1:
           #url: jdbc:mysql://localhost:3306/jeecg-boot2?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
@@ -197,9 +197,6 @@ jeecg:
     password:
     type: STANDALONE
     enabled: true
-#cas单点登录
-cas:
-  prefixUrl: http://cas.example.org:8443/cas
 #Mybatis输出sql日志
 logging:
   level:
@@ -214,51 +211,3 @@ knife4j:
     enable: false
     username: jeecg
     password: jeecg1314
-#第三方登录
-justauth:
-  enabled: true
-  type:
-    GITHUB:
-      client-id: ??
-      client-secret: ??
-      redirect-uri: http://sso.test.com:8080/jeecg-boot/sys/thirdLogin/github/callback
-    WECHAT_ENTERPRISE:
-      client-id: ??
-      client-secret: ??
-      redirect-uri: http://sso.test.com:8080/jeecg-boot/sys/thirdLogin/wechat_enterprise/callback
-      agent-id: ??
-    DINGTALK:
-      client-id: ??
-      client-secret: ??
-      redirect-uri: http://sso.test.com:8080/jeecg-boot/sys/thirdLogin/dingtalk/callback
-    WECHAT_OPEN:
-      client-id: ??
-      client-secret: ??
-      redirect-uri: http://sso.test.com:8080/jeecg-boot/sys/thirdLogin/wechat_open/callback
-  cache:
-    type: default
-    prefix: 'demo::'
-    timeout: 1h
-#第三方APP对接
-third-app:
-  enabled: false
-  type:
-    #企业微信
-    WECHAT_ENTERPRISE:
-      enabled: false
-      #CORP_ID
-      client-id: ??
-      #SECRET
-      client-secret: ??
-      #自建应用id
-      agent-id: ??
-      #自建应用秘钥（新版企微需要配置）
-      # agent-app-secret: ??
-    #钉钉
-    DINGTALK:
-      enabled: false
-      # appKey
-      client-id: ??
-      # appSecret
-      client-secret: ??
-      agent-id: ??
