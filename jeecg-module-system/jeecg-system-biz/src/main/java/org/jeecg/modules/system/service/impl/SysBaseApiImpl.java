@@ -314,6 +314,11 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 		if(table.indexOf(SymbolConstant.SYS_VAR_PREFIX)>=0){
 			table = QueryGenerator.getSqlRuleValue(table);
 		}
+		// temp solution, fix SYS_USER/SYS_CATEGORY/SYS_DEPART
+		// when mysql 8.0 low_case=0
+		if(table.startsWith("SYS_")){
+			table = table.toLowerCase();
+		}
 		//update-end-author:taoyan date:20200820 for:【Online+系统】字典表加权限控制机制逻辑，想法不错 LOWCOD-799
 		return sysDictService.queryTableDictItemsByCode(table, text, code);
 	}
