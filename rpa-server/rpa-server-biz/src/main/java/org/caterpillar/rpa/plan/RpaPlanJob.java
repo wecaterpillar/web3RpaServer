@@ -52,11 +52,14 @@ public class RpaPlanJob implements Job {
         if(CollectionUtil.isNotEmpty(planItem)){
             // 创建记录
             String id = UUIDGenerator.generate();
+            // 默认任务分配 username -> update_by -> create_by
             String createBy = MapUtil.getStr(planItem, "username");
+            if(ObjectUtils.isEmpty(createBy)){
+                createBy = MapUtil.getStr(planItem, "update_by");
+            }
             if(ObjectUtils.isEmpty(createBy)){
                 createBy = MapUtil.getStr(planItem, "create_by");
             }
-
             jdbcTemplate.update(taskSql, new Object[]{id
                     , MapUtil.getStr(planItem, "script_name")
                     , MapUtil.getStr(planItem, "id")
