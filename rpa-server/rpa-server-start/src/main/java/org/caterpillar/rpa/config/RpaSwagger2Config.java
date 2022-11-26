@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @EnableSwagger2    //开启 Swagger2
 @EnableKnife4j     //开启 knife4j，可以不写
 @Import(BeanValidatorPluginsConfiguration.class)
-public class Swagger2Config implements WebMvcConfigurer {
+public class RpaSwagger2Config implements WebMvcConfigurer {
 
     /**
      *
@@ -59,10 +59,11 @@ public class Swagger2Config implements WebMvcConfigurer {
      *
      * @return Docket
      */
-    @Bean(value = "defaultApi2")
-    public Docket defaultApi2() {
+    @Bean(value = "rpaDefaultApi")
+    public Docket rpaDefaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
+                .groupName("rpa")
                 .select()
                 //此包路径下的类，才生成接口文档
                 //.apis(RequestHandlerSelectors.basePackage("org.caterpillar.rpa"))

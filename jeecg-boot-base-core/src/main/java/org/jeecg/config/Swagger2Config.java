@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 /**
  * @Author scott
  */
-//@Configuration
-//@EnableSwagger2    //开启 Swagger2
+@Configuration
+@EnableSwagger2    //开启 Swagger2
 //@EnableKnife4j     //开启 knife4j，可以不写
 @Import(BeanValidatorPluginsConfiguration.class)
 public class Swagger2Config implements WebMvcConfigurer {
