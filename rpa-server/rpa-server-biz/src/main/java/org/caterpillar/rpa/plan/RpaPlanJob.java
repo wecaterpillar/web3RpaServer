@@ -53,7 +53,8 @@ public class RpaPlanJob implements Job {
             // 创建记录
             String id = UUIDGenerator.generate();
             // 默认任务分配 username -> update_by -> create_by
-            String createBy = MapUtil.getStr(planItem, "username");
+            String username = MapUtil.getStr(planItem, "username");
+            String createBy = username;
             if(ObjectUtils.isEmpty(createBy)){
                 createBy = MapUtil.getStr(planItem, "update_by");
             }
@@ -69,6 +70,13 @@ public class RpaPlanJob implements Job {
 
             // 运行节点
             String runnode = MapUtil.getStr(planItem, "runnode");
+            if(ObjectUtils.isEmpty(runnode) && !ObjectUtils.isEmpty(username)){
+                // 检查用户最新更新的节点
+                List<Map<String, Object>> nodes = jdbcTemplate.queryForList("select * from rpa_runnode where username=? order by update_time desc", username);
+                if(CollectionUtil.isNotEmpty(nodes)){
+                    runnode = MapUtil.getStr(nodes.get(0),"runnode");
+                }
+            }
             if(!ObjectUtils.isEmpty(runnode)){
                 jdbcTemplate.update("update rpa_plast_task set runnode=? where id=?", new Object[]{runnode, id});
             }
