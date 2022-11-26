@@ -1,22 +1,18 @@
 package org.caterpillar.rpa.plan;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.util.DateUtils;
 import org.jeecg.common.util.UUIDGenerator;
-import org.jeecg.common.util.dynamic.db.DynamicDBUtil;
-import org.jeecg.modules.online.cgform.service.IOnlineService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.util.IdGenerator;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -51,18 +47,29 @@ public class RpaPlanJob implements Job {
         if(CollectionUtil.isNotEmpty(listPlan)){
             planItem = listPlan.get(0);
         }
-        String taskSql = "insert into rpa_plan_task(id, name, plan_id, script_id, project_id, create_time)" +
-                " value(?,?,?,?,?, now())";
+        String taskSql = "insert into rpa_plan_task(id, name, plan_id, script_id, project_id, create_by, create_time)" +
+                " value(?,?,?,?,?,?, now())";
         if(CollectionUtil.isNotEmpty(planItem)){
-            jdbcTemplate.update(taskSql, new Object[]{UUIDGenerator.generate()
+            // 创建记录
+            String id = UUIDGenerator.generate();
+            String createBy = MapUtil.getStr(planItem, "username");
+            if(ObjectUtils.isEmpty(createBy)){
+                createBy = MapUtil.getStr(planItem, "create_by");
+            }
+
+            jdbcTemplate.update(taskSql, new Object[]{id
                     , MapUtil.getStr(planItem, "script_name")
                     , MapUtil.getStr(planItem, "id")
                     , MapUtil.getStr(planItem, "script_id")
-                    , MapUtil.getStr(planItem, "project_id")});
+                    , MapUtil.getStr(planItem, "project_id")
+                    , createBy});
+
+            // 运行节点
+            String runnode = MapUtil.getStr(planItem, "runnode");
+            if(!ObjectUtils.isEmpty(runnode)){
+                jdbcTemplate.update("update rpa_plast_task set runnode=? where id=?", new Object[]{runnode, id});
+            }
         }
-
-
-
 
 
     }
