@@ -57,12 +57,11 @@ public class AccountController {
             salt = MapUtil.getStr(mapParam, "saltMd5");
         }
         if(ObjectUtils.isEmpty(salt)){
-            // TODO 待测试
-            // saltMd5=md5(SUBSTR(address,10,1))
-            // saltMd5=md5(SUBSTR(username,-3,1))
             if(isAddress(account)){
-                salt = md5(account.substring(10,11));
+                // saltMd5=md5(SUBSTR(address,10,1))
+                salt = md5(account.substring(9,10));
             }else{
+                // saltMd5=md5(SUBSTR(username,-3,1))
                 salt = md5(account.substring(account.length()-3,account.length()-2));
             }
         }
