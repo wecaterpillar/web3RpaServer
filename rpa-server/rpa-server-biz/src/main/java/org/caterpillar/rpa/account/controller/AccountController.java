@@ -33,6 +33,27 @@ public class AccountController {
         return encryptKey;
     }
 
+    /**
+     *  加密机制
+     *     以下为mysql版本的机制
+     * -- 1. 规则说明
+     * -- 账号数据库保存字段： 账号address/加盐saltMd5/加密后数据enResult
+     * -- 1.1 加盐，不同项目规则不一样，由服务器加盐处理
+     *     update cake_address
+     *     set saltMd5=md5(SUBSTR(address,10,1));
+     * -- 1.2 加密密码规则 项目密码 cake存放在项目配置中
+     * -- enKey=md5(concat(address,saltMd5,'cake'));
+     *
+     * -- 2. 对称加密
+     *     update cake_address
+     *     set enResult = hex(AES_ENCRYPT(privateKey, md5(concat(address, saltMd5, 'cake'))));
+     *
+     * -- 3. 对称还原
+     *     select address, AES_DECRYPT(unhex(enResult), md5(concat(address,saltMd5,'cake'))) as privateKey2, privateKey
+     *     from cake_address;
+     * @param mapParam
+     * @return
+     */
     public static String getAccountEncryptKey(Map<String, String> mapParam){
         String encryptKey = null;
         // scope: 1-web3 account 2-web2 account 3-project account
