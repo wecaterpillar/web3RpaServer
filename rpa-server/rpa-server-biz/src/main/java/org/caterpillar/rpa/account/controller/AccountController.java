@@ -40,6 +40,10 @@ public class AccountController {
         // project code
         String project = MapUtil.getStr(mapParam, "project");
         if(ObjectUtils.isEmpty(project)
+                && mapParam.containsKey("project_code")){
+            project = MapUtil.getStr(mapParam, "project_code");
+        }
+        if(ObjectUtils.isEmpty(project)
                 && mapParam.containsKey("project_id")){
             // todo project id -> project code
             String projectId = MapUtil.getStr(mapParam, "project_id");
