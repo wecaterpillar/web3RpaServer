@@ -8,6 +8,7 @@ server:
     include-message: ALWAYS
   servlet:
     context-path: /rpa-server
+  shutdown: graceful
   compression:
     enabled: true
     min-response-size: 1024
