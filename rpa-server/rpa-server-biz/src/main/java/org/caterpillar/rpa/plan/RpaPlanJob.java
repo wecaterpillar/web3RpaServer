@@ -47,8 +47,10 @@ public class RpaPlanJob implements Job {
         if(CollectionUtil.isNotEmpty(listPlan)){
             planItem = listPlan.get(0);
         }
-        String taskSql = "insert into rpa_plan_task(id, name, plan_id, script_id, project_id, create_by, create_time)" +
-                " value(?,?,?,?,?,?, now())";
+        // 20221203 增加两个参数 threads 并发线程数  param_json 定制参数
+        String taskSql = "insert into rpa_plan_task" +
+                "(id, name, plan_id, script_id, project_id, threads, param_json,create_by, create_time)" +
+                " value(?,?,?,?,?,?, ?,?,now())";
         if(CollectionUtil.isNotEmpty(planItem)){
             // 创建记录
             String id = UUIDGenerator.generate();
@@ -66,6 +68,8 @@ public class RpaPlanJob implements Job {
                     , MapUtil.getStr(planItem, "id")
                     , MapUtil.getStr(planItem, "script_id")
                     , MapUtil.getStr(planItem, "project_id")
+                    , MapUtil.getInt(planItem, "threads")
+                    , MapUtil.getStr(planItem, "param_json")
                     , createBy});
 
             // 运行节点
@@ -81,7 +85,6 @@ public class RpaPlanJob implements Job {
                 jdbcTemplate.update("update rpa_plast_task set runnode=? where id=?", new Object[]{runnode, id});
             }
         }
-
 
     }
 }
