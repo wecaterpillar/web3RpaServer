@@ -3,18 +3,25 @@ package org.caterpillar.rpa.browser.service;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.StringUtil;
 import org.jeecg.modules.online.cgform.enhance.CgformEnhanceJavaInter;
 import org.jeecg.modules.online.config.exception.BusinessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Slf4j
 @Component("browserEnhanceBean")
 public class BrowserEnhanceBean implements CgformEnhanceJavaInter {
 
     @Resource
     private BrowserInfoService browserInfoService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public void execute(String tableName, JSONObject json) throws BusinessException {
@@ -22,16 +29,27 @@ public class BrowserEnhanceBean implements CgformEnhanceJavaInter {
         String name = json.getString("name");
         if(ObjectUtil.isEmpty(name)){
             name = RandomUtil.randomString(5);
-            json.put("name", name);
+            updateObjectValue(tableName, json.getString("id"), "name", name);
         }
         // 2. 检查UA
         String ua = json.getString("ua");
         if(ObjectUtil.isEmpty(ua)){
             ua = randomUserAgent(json);
             if(ObjectUtil.isNotEmpty(ua)){
-                json.put("ua", ua);
+                updateObjectValue(tableName, json.getString("id"), "ua", ua);
             }
         }
+    }
+
+    boolean updateObjectValue(String tableName, String id, String field, String value){
+        String sql = "update "+tableName+" set "+field+"='"+value+"' where id='"+id+"'";
+        try{
+            jdbcTemplate.execute(sql);
+        }catch (Throwable t){
+            log.warn("uodate fail in browserEnhanceBean, sql="+sql, t.getMessage());
+            return false;
+        }
+        return true;
     }
 
     private String randomUserAgent(JSONObject json){
