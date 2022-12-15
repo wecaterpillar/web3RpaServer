@@ -37,5 +37,9 @@
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jeecgframework.boot</groupId>
+            <artifactId>hibernate-re</artifactId>
+        </dependency>
     </dependencies>
 </project>

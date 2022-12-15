@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
  * IP地址信息库
  *
  * 整合本地IP库和第三方查询API
+ *
+ * 参考
+ * https://github.com/itbdw/ip-database
+ * https://github.com/out0fmemory/qqwry.dat
  */
 @Service
 public class IpInfoService {

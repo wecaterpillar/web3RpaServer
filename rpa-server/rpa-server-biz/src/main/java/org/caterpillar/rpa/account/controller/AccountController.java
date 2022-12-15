@@ -1,12 +1,9 @@
 package org.caterpillar.rpa.account.controller;
 
 
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.crypto.digest.MD5;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.caterpillar.rpa.account.service.AccountService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@Api(tags="账号account")
 @RestController
 @RequestMapping("/account/api")
 public class AccountController {
