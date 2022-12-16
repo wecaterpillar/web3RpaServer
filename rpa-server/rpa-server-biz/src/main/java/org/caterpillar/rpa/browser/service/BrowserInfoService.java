@@ -4,6 +4,7 @@ import cn.hutool.core.lang.WeightRandom;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class BrowserInfoService {
 
@@ -32,34 +34,7 @@ public class BrowserInfoService {
         return null;
     }
 
-    public static String getOsTypeByUA(String ua){
-        String osType = "Other";
-        if(ua==null){
-            return osType;
-        }
-        ua = ua.toLowerCase();
-        if(ua.indexOf("win")>0){
-            osType = "Windows";
-            return osType;
-        }
-        if(ua.indexOf("mac")>0){
-            osType = "Mac OS X";
-            return osType;
-        }
-        if(ua.indexOf("linux")>0){
-            osType = "Linux";
-            return osType;
-        }
-        if(ua.indexOf("ios")>0 || ua.indexOf("iphone")>0){
-            osType = "iOS";
-            return osType;
-        }
-        if(ua.indexOf("android")>0){
-            osType = "Android";
-            return osType;
-        }
-        return osType;
-    }
+
 
     public String randGetUserAgent(String system, String browser){
         WeightRandom<JSONObject> wr = getUaConfigWeightRandom(system,browser);
@@ -152,5 +127,47 @@ public class BrowserInfoService {
         }
         return result;
     }
+
+    public boolean updateObjectValue(String tableName, String id, String field, String value){
+        String sql = "update "+tableName+" set "+field+"='"+value+"' where id='"+id+"'";
+        try{
+            jdbcTemplate.execute(sql);
+        }catch (Throwable t){
+            log.warn("update fail in browserEnhanceBean, sql="+sql, t.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+
+    public static String getOsTypeByPlatform(String platform) {
+        return getOsTypeByString(platform);
+    }
+
+    public static String getOsTypeByUA(String ua){
+        return getOsTypeByString(ua);
+    }
+    private static String getOsTypeByString(String str){
+        String osType = "";
+        if(str==null){
+            return osType;
+        }
+        osType = "Other";
+        str = str.toLowerCase();
+        if(str.indexOf("win")>=0){
+            osType = "Windows";
+        }else if(str.indexOf("mac")>=0){
+            osType = "Mac OS X";
+        }else if(str.indexOf("linux")>=0){
+            osType = "Linux";
+        }else if(str.indexOf("ios")>0 || str.indexOf("iphone")>0){
+            osType = "iOS";
+        }else if(str.indexOf("android")>0){
+            osType = "Android";
+        }
+        return osType;
+    }
+
+
 
 }

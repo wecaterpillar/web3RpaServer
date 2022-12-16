@@ -1,5 +1,6 @@
 package org.caterpillar.rpa.browser.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -77,5 +78,19 @@ public class W3BrowserController {
         JSONObject data = new JSONObject();
         data.set("ua", ua);
         return  Result.ok(data);
+    }
+    @ApiOperation(value="更新浏览器platform", notes="更新浏览器platform")
+    @GetMapping("update-browser-platform")
+    Result updateBrowserByPlatform(HttpServletRequest request){
+        String platform = request.getParameter("platform");
+        if(ObjectUtil.isEmpty(platform)){
+            return Result.error("platform is must fill");
+        }
+        String osType = BrowserInfoService.getOsTypeByPlatform(platform);
+        String id = request.getParameter("id");
+        if(ObjectUtil.isNotEmpty(id)){
+            browserInfoService.updateObjectValue("w3_browser", id, "os_type", osType);
+        }
+        return Result.ok(osType);
     }
 }

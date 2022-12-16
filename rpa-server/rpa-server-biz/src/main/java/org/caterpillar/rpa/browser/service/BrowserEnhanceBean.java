@@ -42,18 +42,16 @@ public class BrowserEnhanceBean implements CgformEnhanceJavaInter {
                 system = BrowserInfoService.getOsTypeByUA(ua);
                 updateObjectValue(tableName, json.getString("id"), "os_type", system);
             }
+        }else {
+            if(ObjectUtil.isEmpty(system)){
+                system = BrowserInfoService.getOsTypeByUA(ua);
+                updateObjectValue(tableName, json.getString("id"), "os_type", system);
+            }
         }
     }
 
-    boolean updateObjectValue(String tableName, String id, String field, String value){
-        String sql = "update "+tableName+" set "+field+"='"+value+"' where id='"+id+"'";
-        try{
-            jdbcTemplate.execute(sql);
-        }catch (Throwable t){
-            log.warn("update fail in browserEnhanceBean, sql="+sql, t.getMessage());
-            return false;
-        }
-        return true;
+    public boolean updateObjectValue(String tableName, String id, String field, String value){
+        return browserInfoService.updateObjectValue(tableName, id, field, value);
     }
 
     private String randomUserAgent(String system, String browser){
