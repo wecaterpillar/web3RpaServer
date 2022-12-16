@@ -93,7 +93,9 @@ public class BrowserInfoService {
         List<JSONObject> result = new ArrayList<>();
         String sql = "select * from w3_ua_config where weight >0 ";
         // 查询系统类型
-        if(ObjectUtil.isNotEmpty(system) || !"all".equalsIgnoreCase(system)){
+        if(ObjectUtil.isEmpty(system) || "all".equalsIgnoreCase(system) ){
+            // all
+        }else{
             sql += " and ";
             String[] sysArray = system.split(",");
             if(sysArray.length==1) {
@@ -112,7 +114,10 @@ public class BrowserInfoService {
             }
         }
         // 查询浏览器类型
-        if(ObjectUtil.isNotEmpty(browser)){
+        if(ObjectUtil.isEmpty(browser)
+                || "all".equalsIgnoreCase(browser)){
+        }else{
+            // "Brave".equalsIgnoreCase(browser)
             // 暂不实现
         }
         List<Map<String, Object>> list =  jdbcTemplate.queryForList(sql);
