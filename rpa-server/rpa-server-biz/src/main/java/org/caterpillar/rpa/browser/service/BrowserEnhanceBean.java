@@ -32,11 +32,15 @@ public class BrowserEnhanceBean implements CgformEnhanceJavaInter {
             updateObjectValue(tableName, json.getString("id"), "name", name);
         }
         // 2. 检查UA
+        String system = json.getString("os_type");
+        String browser = json.getString("browser");
         String ua = json.getString("ua");
         if(ObjectUtil.isEmpty(ua)){
-            ua = randomUserAgent(json);
+            ua = randomUserAgent(system, browser);
             if(ObjectUtil.isNotEmpty(ua)){
                 updateObjectValue(tableName, json.getString("id"), "ua", ua);
+                system = BrowserInfoService.getOsTypeByUA(ua);
+                updateObjectValue(tableName, json.getString("id"), "os_type", system);
             }
         }
     }
@@ -46,16 +50,15 @@ public class BrowserEnhanceBean implements CgformEnhanceJavaInter {
         try{
             jdbcTemplate.execute(sql);
         }catch (Throwable t){
-            log.warn("uodate fail in browserEnhanceBean, sql="+sql, t.getMessage());
+            log.warn("update fail in browserEnhanceBean, sql="+sql, t.getMessage());
             return false;
         }
         return true;
     }
 
-    private String randomUserAgent(JSONObject json){
+    private String randomUserAgent(String system, String browser){
         String ua = null;
-        String browser = json.getString("browser");
-        ua = browserInfoService.randGetUserAgent(null, browser);
+        ua = browserInfoService.randGetUserAgent(system, browser);
         return ua;
     }
 }

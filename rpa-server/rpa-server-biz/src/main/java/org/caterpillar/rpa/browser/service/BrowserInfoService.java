@@ -7,12 +7,8 @@ import cn.hutool.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +32,34 @@ public class BrowserInfoService {
         return null;
     }
 
+    public static String getOsTypeByUA(String ua){
+        String osType = "Other";
+        if(ua==null){
+            return osType;
+        }
+        ua = ua.toLowerCase();
+        if(ua.indexOf("win")>0){
+            osType = "Windows";
+            return osType;
+        }
+        if(ua.indexOf("mac")>0){
+            osType = "Mac OS X";
+            return osType;
+        }
+        if(ua.indexOf("linux")>0){
+            osType = "Linux";
+            return osType;
+        }
+        if(ua.indexOf("ios")>0 || ua.indexOf("iphone")>0){
+            osType = "iOS";
+            return osType;
+        }
+        if(ua.indexOf("android")>0){
+            osType = "Android";
+            return osType;
+        }
+        return osType;
+    }
 
     public String randGetUserAgent(String system, String browser){
         WeightRandom<JSONObject> wr = getUaConfigWeightRandom(system,browser);
