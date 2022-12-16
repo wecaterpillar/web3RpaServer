@@ -38,8 +38,7 @@ public class BrowserInfoService {
 
 
     public String randGetUserAgent(String system, String browser){
-        WeightRandom<JSONObject> wr = getUaConfigWeightRandom(browser);
-        StringBuffer sb = new StringBuffer();
+        WeightRandom<JSONObject> wr = getUaConfigWeightRandom(system,browser);
         JSONObject uaConfig = wr.next();
         String ua = uaConfig.getStr("ua_template");
 
@@ -79,8 +78,8 @@ public class BrowserInfoService {
     }
 
 
-    public WeightRandom getUaConfigWeightRandom(String browser){
-        List<JSONObject> uaConfigList = getUaConfigs();
+    public WeightRandom getUaConfigWeightRandom(String system,String browser){
+        List<JSONObject> uaConfigList = getUaConfigs(system, browser);
         List<WeightRandom.WeightObj<JSONObject>> list  = new ArrayList<>();
         for(JSONObject uaConfig:  uaConfigList){
             list.add(new WeightRandom.WeightObj<>(uaConfig, uaConfig.getDouble("weight")));
@@ -90,9 +89,32 @@ public class BrowserInfoService {
     }
 
     @Cacheable(cacheNames = "uaConfig#1h", key = "'default'")
-    public List<JSONObject> getUaConfigs(){
+    public List<JSONObject> getUaConfigs(String system,String browser){
         List<JSONObject> result = new ArrayList<>();
-        String sql = "select * from w3_ua_config";
+        String sql = "select * from w3_ua_config where weight >0 ";
+        // 查询系统类型
+        if(ObjectUtil.isNotEmpty(system) || !"all".equalsIgnoreCase(system)){
+            sql += " and ";
+            String[] sysArray = system.split(",");
+            if(sysArray.length==1) {
+                sql += " ua_template like '%"+sysArray[0]+"%' ";
+            }else if(sysArray.length>1){
+                for(int i=0; i<sysArray.length; i++){
+                    if(i==0){
+                        sql += "( ua_template like '%"+sysArray[0]+"%' ";
+                    }else{
+                        sql += "or ua_template like '%"+sysArray[i]+"%' ";
+                    }
+                    if(i==sysArray.length-1){
+                        sql += ")";
+                    }
+                }
+            }
+        }
+        // 查询浏览器类型
+        if(ObjectUtil.isNotEmpty(browser)){
+            // 暂不实现
+        }
         List<Map<String, Object>> list =  jdbcTemplate.queryForList(sql);
         for(Map item: list){
             JSONObject json = new JSONObject();
