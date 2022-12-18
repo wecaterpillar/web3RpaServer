@@ -49,8 +49,8 @@ public class RpaPlanJob implements Job {
         }
         // 20221203 增加两个参数 threads 并发线程数  param_json 定制参数
         String taskSql = "insert into rpa_plan_task" +
-                "(id, name, plan_id, script_id, project_id, threads, param_json,create_by, create_time)" +
-                " value(?,?,?,?,?,?, ?,?,now())";
+                "(id, name, plan_id, script_id, project_id, detail_filter, threads, param_json,create_by, create_time)" +
+                " value(?,?,?,?,?,?,?,?,?,now())";
         if(CollectionUtil.isNotEmpty(planItem)){
             // 创建记录
             String id = UUIDGenerator.generate();
@@ -68,6 +68,7 @@ public class RpaPlanJob implements Job {
                     , MapUtil.getStr(planItem, "id")
                     , MapUtil.getStr(planItem, "script_id")
                     , MapUtil.getStr(planItem, "project_id")
+                    , MapUtil.getStr(planItem, "detail_filter")
                     , MapUtil.getInt(planItem, "threads")
                     , MapUtil.getStr(planItem, "param_json")
                     , createBy});
