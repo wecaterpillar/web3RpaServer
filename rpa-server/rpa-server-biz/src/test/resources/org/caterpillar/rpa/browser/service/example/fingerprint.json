@@ -1,0 +1,68 @@
+{
+  "dpr":"2",
+  "automatic_timezone":"1",
+  "language":"en-US,en",
+  "ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.54 Safari/537.36",
+  "flash":"block",
+  "browser_kernel_config":{
+    "version":"latest",
+    "type":"chrome"
+  },
+  "scan_port_type":"1",
+  "location":"ask",
+  "device_name_switch":"2",
+  "device_name":"DESKTOP-TXKNRO",
+  "speech_switch":"1",
+  "location_switch":"1",
+  "language_switch":"1",
+  "accuracy":"1000",
+  "screen_resolution":"none",
+  "mac_address_config":{
+    "model":"0",
+    "address":""
+  },
+  "fonts":"all",
+  "media_devices":"1",
+  "canvas":"1",
+  "client_rects":"1",
+  "webgl":"2",
+  "webgl_config":{
+    "unmasked_vendor":"ATI Technologies Inc.",
+    "unmasked_renderer":"AMD Radeon Pro 555X OpenGL Engine"
+  },
+  "webgl_image":"1",
+  "audio":"1",
+  "webrtc":"disabled",
+  "do_not_track":"default",
+  "hardware_concurrency":"4",
+  "device_memory":"8",
+  "browser":"chrome",
+  "platform":"MacIntel",
+  "timezone":"",
+  "allow_scan_ports":"",
+  "longitude":"",
+  "latitude":"",
+  "random_ua":{
+    "ua_version":"",
+    "ua_system":""
+  },
+  "system":"Mac OS X",
+  "canvas_id":"3564",
+  "webgl_image_id":"4820",
+  "audio_id":"1375",
+  "client_rects_id":"215",
+  "media_devices_config":[
+    {
+      "kind":"audioinput",
+      "label":"Microphone Array (Conexant SmartAudio HD)"
+    },
+    {
+      "kind":"videoinput",
+      "label":"Integrated Camera (f38d:d75e)"
+    },
+    {
+      "kind":"audiooutput",
+      "label":"Speaker (Conexant SmartAudio HD)"
+    }
+  ]
+}

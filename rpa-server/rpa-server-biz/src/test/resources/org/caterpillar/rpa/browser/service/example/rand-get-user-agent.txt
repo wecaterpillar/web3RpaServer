@@ -1,0 +1,31 @@
+post https://api-global.adspower.net/fbcc/user/rand-get-user-agent
+
+form data:
+system_version: Windows,Mac OS X,Linux,Android,iOS
+version:
+browser: chrome
+system:
+
+return data:
+screen_resolution: "none"
+ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36"
+
+
+// 指定操作系统和浏览器版本
+// system_version=Mac%20OS%20X&version=104&browser=chrome&system=
+        // return data json
+        // screen_resolution: "none"
+        // ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36"
+
+        // system_version=Mac%20OS%20X&version=&browser=chrome&system=
+        //screen_resolution: "none"
+        // ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.125 Safari/537.36"
+
+// 任意操作系统和浏览器版本
+//system_version: Windows,Mac OS X,Linux,Android,iOS
+//version:
+//browser: chrome
+//system:
+        // system_version=Windows%2CMac%20OS%20X%2CLinux%2CAndroid%2CiOS&version=&browser=chrome&system=
+        //screen_resolution: "none"
+        //ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.54 Safari/537.36"
