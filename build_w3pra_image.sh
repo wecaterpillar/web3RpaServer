@@ -1,6 +1,11 @@
 #mvn clean install
 
-cd ./rpa-server/rpa-server-start
+cd ./rpa-server
+
+mvn clean install -Dmaven.test.skip=true
+
+cd ./rpa-server-start
+
 
 group=web3b
 artifactId=w3rpa-server
