@@ -1,7 +1,7 @@
 <#include "/common/utils.ftl">
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" destroyOnClose :title="title" :width="${getModalWidth(tableVo.fieldRowNum?default(1))}" @ok="handleSubmit">
-      <BasicForm @register="registerForm" ref="formRef"/>
+  <div>
+    <BasicForm @register="registerForm" ref="formRef"/>
   <!-- 子表单区域 -->
     <a-tabs v-model:activeKey="activeKey" animated @change="handleChangeTabs">
 <#list subTables as sub><#rt/>
@@ -14,6 +14,7 @@
   <#else>
       <a-tab-pane tab="${sub.ftlDescription}" key="${refKey}" :forceRender="true">
         <JVxeTable
+          v-if="${sub.entityName?uncap_first}Table.show"      
           keep-source
           resizable
           ref="${refKey}"
@@ -30,12 +31,15 @@
   </#if>
 </#list>
     </a-tabs>
-  </BasicModal>
+    <div style="width: 100%;text-align: center;margin-top: 10px;" v-if="showFlowSubmitButton">
+      <a-button preIcon="ant-design:check-outlined" style="width: 126px" type="primary" @click="handleSubmit">提 交</a-button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-    import {ref, computed, unref,reactive} from 'vue';
-    import {BasicModal, useModalInner} from '/@/components/Modal';
+    import { defHttp } from '/@/utils/http/axios';
+    import {ref, computed, unref,reactive, onMounted, defineProps } from 'vue';
     import {BasicForm, useForm} from '/@/components/Form/index';
     import { JVxeTable } from '/@/components/jeecg/JVxeTable'
     import { useJvxeMethod } from '/@/hooks/system/useJvxeMethods.ts'
@@ -47,10 +51,8 @@
     import {formSchema<#list subTables as sub><#if sub.foreignRelationType =='0'>,${sub.entityName?uncap_first}JVxeColumns</#if></#list>} from '../${entityName}.data';
     import {saveOrUpdate<#list subTables as sub>,query${sub.entityName}</#list>} from '../${entityName}.api';
     import { VALIDATE_FAILED } from '/@/utils/common/vxeUtils'
-    // Emits声明
-    const emit = defineEmits(['register','success']);
     const isUpdate = ref(true);
-    const formDisabled = ref(false);
+    
     const refKeys = ref([<#list subTables as sub>'${sub.entityName?uncap_first}', </#list>]);
     <#assign hasOne2Many = false>
     <#assign hasOne2One = false>
@@ -71,48 +73,75 @@
     const ${sub.entityName?uncap_first}Table = reactive({
           loading: false,
           dataSource: [],
-          columns:${sub.entityName?uncap_first}JVxeColumns
+          columns:${sub.entityName?uncap_first}JVxeColumns,
+          show: false
     })
     </#if>
    </#list>
+
+    const props = defineProps({
+      formData: { type: Object, default: ()=>{} },
+      formBpm: { type: Boolean, default: true }
+    });
+    const formDisabled = computed(()=>{
+      if(props.formBpm === true){
+        if(props.formData.disabled === false){
+          return false;
+        }
+      }
+      return true;
+    });
+    // 是否显示提交按钮
+    const showFlowSubmitButton = computed(()=>{
+      if(props.formBpm === true){
+        if(props.formData.disabled === false){
+          return true
+        }
+      }
+      return false
+    });
+    
     //表单配置
     const [registerForm, {setProps,resetFields, setFieldsValue, validate}] = useForm({
-        //labelWidth: 150,
+        labelWidth: 150,
         schemas: formSchema,
         showActionButtonGroup: false,
         baseColProps: {span: ${getFormSpan(tableVo.fieldRowNum?default(1))}}
     });
-     //表单赋值
-    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
-        //重置表单
-        await reset();
-        setModalProps({confirmLoading: false,showCancelBtn:data?.showFooter,showOkBtn:data?.showFooter});
-        isUpdate.value = !!data?.isUpdate;
-        formDisabled.value = !data?.showFooter;
-        if (unref(isUpdate)) {
-            //表单赋值
-            await setFieldsValue({
-                ...data.record,
-            });
-            <#list subTables as sub><#rt/>
-            <#if sub.foreignRelationType =='1'>
-             ${sub.entityName?uncap_first}Form.value.initFormData(query${sub.entityName},data?.record?.id)
-            </#if>
-            </#list>
-            <#list subTables as sub><#rt/>
-            <#if sub.foreignRelationType =='0'>
-             requestSubTableData(query${sub.entityName}, {id:data?.record?.id}, ${sub.entityName?uncap_first}Table)
-            </#if>
-            </#list>
-        }
-        // 隐藏底部时禁用整个表单
-       setProps({ disabled: !data?.showFooter })
+
+    onMounted(()=>{
+      initFormData();
     });
+    //渲染流程表单数据
+    const queryByIdUrl = '/${entityPackage}/${entityName?uncap_first}/queryById';
+    async function initFormData(){
+      if(props.formBpm === true){
+        await reset();
+        let params = {id: props.formData.dataId};
+        const data = await defHttp.get({url: queryByIdUrl, params});
+        //表单赋值
+        await setFieldsValue({
+          ...data
+        });
+        <#list subTables as sub><#rt/>
+        <#if sub.foreignRelationType =='1'>
+        ${sub.entityName?uncap_first}Form.value.initFormData(query${sub.entityName}, data.id)
+        </#if>
+        </#list>
+        <#list subTables as sub><#rt/>
+        <#if sub.foreignRelationType =='0'>
+        requestSubTableData(query${sub.entityName}, {id: data.id}, ${sub.entityName?uncap_first}Table, ()=>{
+          ${sub.entityName?uncap_first}Table.show = true;
+        });
+        </#if>
+        </#list>
+        // 隐藏底部时禁用整个表单
+        setProps({ disabled: formDisabled.value })
+      }
+    }
+    
     //方法配置
     const [handleChangeTabs,handleSubmit,requestSubTableData,formRef] = useJvxeMethod(requestAddOrEdit,classifyIntoFormData,tableRefs,activeKey,refKeys<#if hasOne2One==true>,validateSubForm</#if>);
-
-    //设置标题
-    const title = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
 
     async function reset(){
       await resetFields();
@@ -166,17 +195,8 @@
     </#if>
     //表单提交事件
     async function requestAddOrEdit(values) {
-        try {
-            setModalProps({confirmLoading: true});
-            //提交表单
-            await saveOrUpdate(values, isUpdate.value);
-            //关闭弹窗
-            closeModal();
-            //刷新列表
-            emit('success');
-        } finally {
-            setModalProps({confirmLoading: false});
-        }
+      //提交表单
+      await saveOrUpdate(values, true);
     }
 </script>
 

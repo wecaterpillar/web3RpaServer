@@ -1,6 +1,6 @@
 <#include "/common/utils.ftl">
 <template>
-  <BasicModal ref="modalRef" destroyOnClose wrapClassName="j-cgform-tab-modal" v-bind="$attrs" @register="registerModal" :width="${getModalWidth(tableVo.fieldRowNum?default(1))}" @ok="handleSubmit">
+  <div>
   <!-- 子表单区域 -->
     <a-tabs v-model:activeKey="activeKey" animated @change="handleChangeTabs">
      <!--主表区域 -->
@@ -21,6 +21,7 @@
           keep-source
           resizable
           ref="${refKey}"
+          v-if="${sub.entityName?uncap_first}Table.show"
           :loading="${sub.entityName?uncap_first}Table.loading"
           :columns="${sub.entityName?uncap_first}Table.columns"
           :dataSource="${sub.entityName?uncap_first}Table.dataSource"
@@ -34,12 +35,16 @@
   </#if>
 </#list>
     </a-tabs>
-  </BasicModal>
+
+    <div style="width: 100%;text-align: center;margin-top: 10px;" v-if="showFlowSubmitButton">
+      <a-button preIcon="ant-design:check-outlined" style="width: 126px" type="primary" @click="handleSubmit">提 交</a-button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-    import {ref, computed, unref,reactive} from 'vue';
-    import {BasicModal, useModalInner} from '/@/components/Modal';
+    import { defHttp } from '/@/utils/http/axios';
+    import {ref, computed, unref,reactive, onMounted, defineProps } from 'vue';
     import {BasicForm, useForm} from '/@/components/Form/index';
     import { JVxeTable } from '/@/components/jeecg/JVxeTable'
     import { useJvxeMethod } from '/@/hooks/system/useJvxeMethods.ts'
@@ -51,11 +56,6 @@
     import {formSchema<#list subTables as sub><#if sub.foreignRelationType =='0'>,${sub.entityName?uncap_first}Columns</#if></#list>} from '../${entityName}.data';
     import {saveOrUpdate<#list subTables as sub>,${sub.entityName?uncap_first}List</#list>} from '../${entityName}.api';
     import { VALIDATE_FAILED } from '/@/utils/common/vxeUtils'
-    // Emits声明
-    const emit = defineEmits(['register','success']);
-    const isUpdate = ref(true);
-    const formDisabled = ref(false);
-    const modalRef = ref();
     const refKeys = ref(['${tableVo.entityName?uncap_first}',<#list subTables as sub>'${sub.entityName?uncap_first}', </#list>]);
     <#assign hasOne2Many = false>
     <#assign hasOne2One = false>
@@ -76,61 +76,83 @@
     const ${sub.entityName?uncap_first}Table = reactive({
           loading: false,
           dataSource: [],
-          columns:${sub.entityName?uncap_first}Columns
+          columns:${sub.entityName?uncap_first}Columns,
+          show: false
     })
     </#if>
    </#list>
+
+    const props = defineProps({
+      formData: { type: Object, default: ()=>{} },
+      formBpm: { type: Boolean, default: true }
+    });
+    const formDisabled = computed(()=>{
+      if(props.formBpm === true){
+        if(props.formData.disabled === false){
+          return false;
+        }
+      }
+      return true;
+    });
+    // 是否显示提交按钮
+    const showFlowSubmitButton = computed(()=>{
+      if(props.formBpm === true){
+        if(props.formData.disabled === false){
+          return true
+        }
+      }
+      return false
+    });
+    
     //表单配置
     const [registerForm, {setProps,resetFields, setFieldsValue, validate}] = useForm({
-        //labelWidth: 150,
+        labelWidth: 150,
         schemas: formSchema,
         showActionButtonGroup: false,
         baseColProps: {span: ${getFormSpan(tableVo.fieldRowNum?default(1))}}
     });
-     //表单赋值
-    const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
-        //重置表单
-        await reset();
-        setModalProps({confirmLoading: false,showCancelBtn:data?.showFooter,showOkBtn:data?.showFooter});
-        isUpdate.value = !!data?.isUpdate;
-        formDisabled.value = !data?.showFooter;
-        if (unref(isUpdate)) {
-            //表单赋值
-            await setFieldsValue({
-                ...data.record,
-            });
-            <#list subTables as sub><#rt/>
-            <#if sub.foreignRelationType =='1'>
-             ${sub.entityName?uncap_first}Form.value.initFormData(${sub.entityName?uncap_first}List,data?.record?.id)
-            </#if>
-            </#list>
-            <#list subTables as sub><#rt/>
-            <#if sub.foreignRelationType =='0'>
-             requestSubTableData(${sub.entityName?uncap_first}List, {id:data?.record?.id}, ${sub.entityName?uncap_first}Table)
-            </#if>
-            </#list>
-        }
-        // 隐藏底部时禁用整个表单
-       setProps({ disabled: !data?.showFooter })
+
+    onMounted(()=>{
+      initFormData();
     });
+    //渲染流程表单数据
+    const queryByIdUrl = '/${entityPackage}/${entityName?uncap_first}/queryById';
+    async function initFormData(){
+      if(props.formBpm === true){
+        await reset();
+        let params = {id: props.formData.dataId};
+        const data = await defHttp.get({url: queryByIdUrl, params});
+        //表单赋值
+        await setFieldsValue({
+          ...data
+        });
+        <#list subTables as sub><#rt/>
+        <#if sub.foreignRelationType =='1'>
+        ${sub.entityName?uncap_first}Form.value.initFormData(${sub.entityName?uncap_first}List, data.id)
+        </#if>
+        </#list>
+        <#list subTables as sub><#rt/>
+        <#if sub.foreignRelationType =='0'>
+        requestSubTableData(${sub.entityName?uncap_first}List, {id: data.id}, ${sub.entityName?uncap_first}Table, ()=>{
+          ${sub.entityName?uncap_first}Table.show = true;
+        })
+        </#if>
+        </#list>
+        // 隐藏底部时禁用整个表单
+        setProps({ disabled: formDisabled.value })
+      }
+    }
+
     //方法配置
     const [handleChangeTabs,handleSubmit,requestSubTableData,formRef] = useJvxeMethod(requestAddOrEdit,classifyIntoFormData,tableRefs,activeKey,refKeys<#if hasOne2One==true>,validateSubForm</#if>);
     // 弹窗tabs滚动区域的高度
     const tabsStyle = computed(() => {
       let height: Nullable<string> = null
       let minHeight = '100px'
-      let maxHeight: Nullable<string> = '500px'
       // 弹窗wrapper
-      let modalWrapperRef = modalRef.value?.modalWrapperRef
-      if (modalWrapperRef) {
-        if (modalWrapperRef.fullScreen) {
-          height = 'calc(' + modalWrapperRef.spinStyle.height + ' - 50px)';
-          maxHeight = null
-        }
-      }
-      <#-- update-begin-author:taoyan date:2022-11-14 for:VUEN-2674 【代码生成】对接流程表单 附加单据显示问题 5.多tab生成代码后，新增 没有滚动条，只能填写部分字段 -->
+      <#-- update-begin-author:taoyan date:2022-11-14 for:VUEN-2674 【代码生成】对接流程表单 附加单据显示问题 5.多tab生成代码后，新增 没有滚动条，只能填写部分字段 --> 
       let overflow = 'auto';
-      return {height, minHeight, maxHeight, overflow};
+      return {height, minHeight, overflow};
       <#-- update-end-author:taoyan date:2022-11-14 for:VUEN-2674 【代码生成】对接流程表单 附加单据显示问题 5.多tab生成代码后，新增 没有滚动条，只能填写部分字段 -->
     })
 
@@ -186,17 +208,8 @@
     </#if>
     //表单提交事件
     async function requestAddOrEdit(values) {
-        try {
-            setModalProps({confirmLoading: true});
-            //提交表单
-            await saveOrUpdate(values, isUpdate.value);
-            //关闭弹窗
-            closeModal();
-            //刷新列表
-            emit('success');
-        } finally {
-            setModalProps({confirmLoading: false});
-        }
+      //提交表单
+      await saveOrUpdate(values, true);
     }
 </script>
 

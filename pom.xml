@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jeecgframework.boot</groupId>
   <artifactId>jeecg-boot-parent</artifactId>
-  <version>3.4.3</version>
+  <version>3.4.4</version>
   <packaging>pom</packaging>
   <name>web3 RPA(jeecg-boot)</name>
   	<parent>
@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<web3rpa.version>1.0.0</web3rpa.version>
-		<jeecgboot.version>3.4.3</jeecgboot.version>
+		<jeecgboot.version>3.4.4</jeecgboot.version>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -46,11 +46,11 @@
 		<aliyun-java-sdk-dysmsapi.version>2.1.0</aliyun-java-sdk-dysmsapi.version>
 		<aliyun.oss.version>3.11.2</aliyun.oss.version>
 		<!-- shiro -->
-		<shiro.version>1.9.1</shiro.version>
+		<shiro.version>1.10.0</shiro.version>
 		<java-jwt.version>3.11.0</java-jwt.version>
 		<shiro-redis.version>3.1.0</shiro-redis.version>
-		<codegenerate.version>1.4.2</codegenerate.version>
-		<autopoi-web.version>1.4.2</autopoi-web.version>
+		<codegenerate.version>1.4.3</codegenerate.version>
+		<autopoi-web.version>1.4.5</autopoi-web.version>
 		<minio.version>8.0.3</minio.version>
 		<justauth-spring-boot-starter.version>1.3.4</justauth-spring-boot-starter.version>
 		<dom4j.version>1.6.1</dom4j.version>
@@ -393,7 +393,7 @@
 			<url>http://maven.jeecg.com:8090/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-
+	
     <!-- 环境 -->
     <profiles>
         <!-- 开发 -->
