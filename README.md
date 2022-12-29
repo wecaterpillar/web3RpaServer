@@ -40,6 +40,7 @@ web3RPA Server
 ### 源码下载
 - 后台源码 ：https://github.com/wecaterpillar/web3rpa-server
 - 前端源码 ：https://github.com/wecaterpillar/web3rpa-vue
+- Electron: win/mac桌面版 源码待开放
 
 ### 技术支持
 jeecg官方支持： http://jeecg.com/doc/help
