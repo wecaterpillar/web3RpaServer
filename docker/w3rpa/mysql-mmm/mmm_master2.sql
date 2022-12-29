@@ -2,6 +2,8 @@
 -- m1 18.139.169.175
 -- m2 43.159.193.47
 
+-- change your password in prod
+
 create user 'sync'@'18.139.169.175' identified WITH caching_sha2_password by 'rpa2022sync';
 grant replication slave on *.* to 'sync'@'18.139.169.175';
 flush PRIVILEGES;
